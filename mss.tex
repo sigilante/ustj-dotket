@@ -21,13 +21,13 @@
 %  Arrange subsequent pages:
 \fancyhf{}
 \fancyhead[LE]{{\urbitfont Urbit Systems Technical Journal}}
-\fancyhead[RO]{The Stakes of Scrying with \texttt{\string.\string^} dotket and the Seer Proposal}
+\fancyhead[RO]{The Stakes of Scrying:  \texttt{\string.\string^} dotket and the Seer Proposal}
 \fancyfoot[LE,RO]{\thepage}
 
 \newcommand{\dotket}{\texttt{\string.\string^}~dotket}
 
 %%MANUSCRIPT
-\title{The Stakes of Scrying with \texttt{\string.\string^} dotket and the Seer Proposal}
+\title{The Stakes of Scrying:  \texttt{\string.\string^} dotket and the Seer Proposal}
 \author{\authorname~\authorpatp \\ \affiliation}
 \date{}
 
@@ -50,7 +50,7 @@ Nock 12 and the \dotket~rune break the referential transparency of Nock, with co
 
 While Nock formally has twelve opcodes, numbered 0--11, it is convenient to expose in userspace a fake Nock 12 opcode to expose the scry namespace to userspace developers.  This opcode is trivially invoked by using the Hoon \dotket~rune.  However, Nock 12 breaks the referential transparency of Nock, and this has consequences for the purity of Urbit's functional programming model.
 
-\section{How \dotket~Works}
+\section[How dotket Works]{How \dotket~Works}
 
 The Nock 12 opcode and the \dotket~rune are used by userspace code to ask the kernel for data in the scry namespace.\footnote{The scry namespace, in brief, is a TODO bound}  When Urbit runs userspace code, that code is not raw Nock.  It is instead called Mock, which is Nock with two additions:   deterministic errors are caught and returned as values to the kernel; and there is an extra Nock opcode, opcode 12.  A simple Nock 12 formula looks like \texttt{\string[12 \string[1 /foo/bar/baz\string]\string]}, where \texttt{/foo/bar/baz} is a path literal \texttt{\string[\%foo \%bar \%baz \textasciitilde\string]}, representing a path in the scry namespace.  The result of running this opcode will be the result of performing the scry request, i.e. dereferencing the path.
 
