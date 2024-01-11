@@ -1,6 +1,6 @@
 # KnowhutImean?
 TARGET = mss
-BIBFILE = ernest
+BIBFILE = ustj-dotket
 
 all: $(TARGET).pdf
 
