@@ -2,7 +2,9 @@
 
 \usepackage{ustj}
 
-\newcommand{\authorname}{Ted Blackman~\patp{rovnys-ricfer} and Paul Driver~\patp{fodwyt-ragful}}
+\addbibresource{mss.bib}
+
+\newcommand{\authorname}{Ted Blackman~\patp{rovnys-ricfer} \\ Paul Driver~\patp{fodwyt-ragful}}
 \newcommand{\authorpatp}{}
 \newcommand{\affiliation}{Urbit Foundation}
 
@@ -133,7 +135,7 @@ Seer is designed as a replacement for \dotket, and thus attempts to be as ergono
 ++  on-poke
   |=  [m=mark v=vase]
   ^-  (quip card _this)
-  =/  foo-result  .^  @da  /cx/(now)/foo
+  =/  foo-result  .^(@da /cx/(scot %da now)/foo)
   ::  do something with foo-result...
   [~ this]
 \end{lstlisting}
@@ -203,6 +205,5 @@ Gall will also need to run the \lstinline[style=inlinecode]{++on-peek} arm of a 
 
 Because of these concerns with the proposed move-based replacement for \dotket, we will first add it as a new feature alongside \dotket~before committing to removing \dotket.  In this way, if the application patterns end up suffering inordinately, \dotket~may be retained.  That being said, the current primary plan is to deprecate \dotket~once move-based scrying has been verified as providing a sufficiently good application model.  This is a conservative, incremental approach that will not break any existing code and lets us try out the new style in production applications before committing to the removal of Nock 12.
 
-\bibliographystyle{plainnat}
-\bibliography{ustj-dotket}
+\printbibliography
 \end{document}
