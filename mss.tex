@@ -14,8 +14,8 @@
 \fancyhead{}
 \fancyfoot[L]{{\footnotesize
               %% We toggle between these:
-              Manuscript submitted for review.\\
-              % {\it Urbit Systems Technical Journal} I:1 (2024):  1–3. \\
+              % Manuscript submitted for review.\\
+              {\it Urbit Systems Technical Journal} I:1 (2024):  35–46. \\
               ~ \\
               Address author correspondence to \patp{rovnys-ricfer}.
               }}
@@ -23,13 +23,13 @@
 %  Arrange subsequent pages:
 \fancyhf{}
 \fancyhead[LE]{{\urbitfont Urbit Systems Technical Journal}}
-\fancyhead[RO]{The Stakes of Scrying:  \lstinline[style=inlinecode]{.^} dotket and the Seer Proposal}
+\fancyhead[RO]{\lstinline[style=inlinecode]{.^} dotket and the Seer Proposal}
 \fancyfoot[LE,RO]{\thepage}
 
 \newcommand{\dotket}{\lstinline[style=inlinecode]{.^}~dotket}
 
 %%MANUSCRIPT
-\title{The Stakes of Scrying:  \lstinline[style=inlinecode]{.^} dotket and the Seer Proposal}
+\title{The Stakes of Scrying:  \\ \lstinline[style=inlinecode]{.^} dotket and the Seer Proposal}
 \author{\authorname~\authorpatp \\ \affiliation}
 \date{}
 
@@ -39,22 +39,23 @@
 \thispagestyle{firststyle}
 
 \begin{abstract}
-Nock 12 and the \dotket~rune break the referential transparency of Nock, with consequences for the purity of Urbit's functional programming model.  We consider the implications of this, and propose a move-based replacement for the \dotket~rune that would restore referential transparency to Nock.
+\noindent
+The expedient of Nock 12 and the \dotket~rune break the referential transparency of Nock, with consequences for the purity of Urbit's functional programming model.  We consider the implications of this and propose a move\-based replacement for the \dotket~rune that restores referential transparency.
 \end{abstract}
 
 % We will adjust page numbering in final editing.
 \pagenumbering{arabic}
-\setcounter{page}{1}
+\setcounter{page}{35}
 
 \tableofcontents
 
 \section{Introduction}
 
-While Nock formally has twelve opcodes, numbered 0--11, it is convenient to expose in userspace a fake Nock 12 opcode to expose the scry namespace to userspace developers.  This opcode is trivially invoked by using the Hoon \dotket~rune.  However, Nock 12 breaks the referential transparency of Nock, and this has consequences for the purity of Urbit's functional programming model.
+While Nock formally has twelve opcodes, numbered 0--11, it is convenient to expose in userspace a fake Nock 12 opcode to expose the scry namespace to userspace developers without an asynchronous retrievel step.  This opcode is trivially invoked by using the Hoon \dotket~rune.\footnote{The idea of using a pattern like scrying to introduce a value into a referentially transparent namespace predates Urbit itself; cf. \citet{Yarvin2006}.}  However, Nock 12 breaks the referential transparency of Nock, and this has consequences for the purity of Urbit's functional programming model.
 
-\section[How dotket Works]{How \dotket~Works}
+\section{How \dotket~Works}
 
-The Nock 12 opcode and the \dotket~rune are used by userspace code to ask the kernel for data in the scry namespace.\footnote{The scry namespace, in brief, is a collection of immutable values “bound” by convention at fixed endpoints.  The scry namespace is defined by a unique path for each resource.  A representative scry path would have the entries \lstinline[style=inlinecode]{/host/rift/life/vane/request-type/revision-number/desk/file-path/mark}.}  When Urbit runs userspace code, that code is not raw Nock.  It is instead called Mock, which is Nock with two additions:   deterministic errors are caught and returned as values to the kernel; and there is an extra Nock opcode, opcode 12.  A simple Nock 12 formula looks like \lstinline[style=inlinecode]{[12 [1 /foo/bar/baz]]}, where \lstinline[style=inlinecode]{/foo/bar/baz} is a path literal \lstinline[style=inlinecode]{[%foo %bar %baz ~]}, representing a path in the scry namespace.  The result of running this opcode will be the result of performing the scry request, i.e. dereferencing the path.
+The Nock 12 opcode and the \dotket~rune are used by user-\newline{}space code to ask the kernel for data in the scry namespace.\footnote{The scry namespace, in brief, is a collection of immutable values “bound” by convention at fixed endpoints.  The scry namespace is defined by a unique path for each resource.  A representative scry path would have the entries \texttt{/host/rift/life/vane/request-type/revision-number/desk\newline{}/file-path/mark}.}  When Urbit runs userspace code, that code is not raw Nock.  It is instead called Mock, which is Nock with two additions:   deterministic errors are caught and returned as values to the kernel; and there is an extra Nock opcode, opcode 12.  A simple Nock 12 formula looks like \lstinline[style=inlinecode]{[12 [1 /foo/bar/baz]]}, where \lstinline[style=inlinecode]{/foo/bar/baz} is a path literal \lstinline[style=inlinecode]{[%foo %bar %baz ~]}, representing a path in the scry namespace.  The result of running this opcode will be the result of performing the scry request, i.e. dereferencing the path.
 
 Catching deterministic errors is uncontroversial, but the Nock 12 opcode poses some difficulties and has been under scrutiny for years now.  The most tangible problem with Nock 12 is that it prevents userspace code from persistently memoizing Nock computations; at the moment, only kernelspace code can hold onto Nock memoization caches across multiple Arvo events.  The lifetime of a userspace memoization cache is limited to a single metacircular evaluation context, i.e. a single call to \lstinline[style=inlinecode]{++mink} or an equivalent gate that runs Mock (virtual Nock with the extra opcode).
 
@@ -69,7 +70,7 @@ Userspace code cannot memoize Nock persistently because it is not feasible for t
 \noindent
 While error handling is not relevant to the current question, a brief description is included here for thoroughness.  The \lstinline[style=inlinecode]{error} in \lstinline[style=inlinecode]{++mink}'s result \lstinline[style=inlinecode]{[2 error]} is a deterministic error, meaning that every attempt to evaluate that \lstinline[style=inlinecode]{[subject formula]} pair will always result in that same error value—deterministic errors correspond to the lines in the Nock spec where \lstinline[style=inlinecode]{*a} evaluates to \lstinline[style=inlinecode]{*a}, i.e. a trivial infinite loop.  Nondeterministic errors, such as running out of usable memory or getting interrupted by the user, result in the function failing to complete, and the Arvo event will be aborted and rolled back to its state before trying to run this new event.
 
-As mentioned, the \lstinline[style=inlinecode]{[subject formula]} pair is not the only input to \lstinline[style=inlinecode]{++mink}.  There is also an argument of the form \lstinline[style=inlinecode]{scry=$-(^ (unit (unit)))}, called the scry handler gate.  When \lstinline[style=inlinecode]{++mink} encounters a Nock 12 opcode while evaluating the \lstinline[style=inlinecode]{[subject formula]} expression, it evaluates the sub-formula to obtain a path to look up in the scry namespace.  Once it has this path, it calls the scry handler gate on the path, which returns one of:
+As mentioned, the \lstinline[style=inlinecode]{[subject formula]} pair is not the only input to \lstinline[style=inlinecode]{++mink}.  There is also an argument of the form \lstinline[style=inlinecode]{scry= $-(^ (unit (unit)))}, called the scry handler gate.  When \lstinline[style=inlinecode]{++mink} encounters a Nock 12 opcode while evaluating an expression \lstinline[style=inlinecode]{[subject formula]}, it evaluates the sub-formula to obtain a path to look up in the scry namespace.  Once it has this path, it calls the scry handler gate on the path, which returns one of:
 
 \begin{itemize}
   \item  \lstinline[style=inlinecode]{[~ ~ value]} positive scry response;
@@ -82,7 +83,7 @@ The positive response case means that the scry was performed successfully and yi
 
 A scry block means the system refused to answer the question, i.e. the request was "blocked" for some reason—this could be due to lack of permission, or because the request asked about the future, or the request asked for data from another ship that isn't synchronously available within this Arvo event. If the scry blocks, \lstinline[style=inlinecode]{++mink} returns a \lstinline[style=inlinecode]{[1 block]}, where \lstinline[style=inlinecode]{block} is the scry request path whose value could not be resolved.
 
-The Nock 12 opcode is problematic because it renders the result of the computation dependent on external data which are not in the \lstinline[style=inlinecode]{[subject formula]} that is being evaluated.  The result is no longer a pure function of the \lstinline[style=inlinecode]{subject} and \lstinline[style=inlinecode]{formula}:  depending on what the scry handler gate is, the same \lstinline[style=inlinecode]{[subject formula]} could yield different results.  Consider \lstinline[style=inlinecode]{[subject formula]} of \lstinline[style=inlinecode]{[0 [12 1 /foo/bar]]}.  This returns the result of looking up the \lstinline[style=inlinecode]{/foo/bar} scry request path from the scry gate. Userspace code (which is untrusted) could call \lstinline[style=inlinecode]{(mink [[0 12 1 /foo/bar]] |=(^ [~ ~ 33]))}, acquire the result \lstinline[style=inlinecode]{33}, then call \lstinline[style=inlinecode]{(mink [[0 12 1 /foo/bar]] |=(^ [~ ~ 44]))} to yield \lstinline[style=inlinecode]{44}.  The \lstinline[style=inlinecode]{subject}s and \lstinline[style=inlinecode]{formula}s were identical, but because they were evaluated with different scry gates, they yielded different results.
+The Nock 12 opcode is problematic because it renders the result of the computation dependent on external data which are not in the \lstinline[style=inlinecode]{[subject formula]} that is being evaluated.  The result is no longer a pure function of the \lstinline[style=inlinecode]{subject} and \lstinline[style=inlinecode]{formula}:  depending on what the scry handler gate is, the same \lstinline[style=inlinecode]{[subject formula]} could yield different results.  Consider \lstinline[style=inlinecode]{[subject formula]} of \lstinline[style=inlinecode]{[0 [12 1 /foo/bar]]}.  This returns the result of looking up the \lstinline[style=inlinecode]{/foo/bar} scry request path from the scry gate. Userspace code (which is untrusted) could call \lstinline[style=inlinecode]{(mink [[0 12 1 /foo/bar]] |=(^ [~ ~ 33]))}, acquire a result \lstinline[style=inlinecode]{33}, then call \lstinline[style=inlinecode]{(mink [[0 12 1 /foo/bar]] |=(^ [~ ~ 44]))} to yield \lstinline[style=inlinecode]{44}.  The \lstinline[style=inlinecode]{subject}s and \lstinline[style=inlinecode]{formula}s were identical, but because they were evaluated with different scry gates, they yielded different results.
 
 Given that Urbit is supposed to be a pure-functional system, how can this be acceptable?  The answer is that Mock, virtual Nock, \emph{is} purely functional (mathematically, a ``partial function'' like Nock itself) as long as it's only ever run using the real scry namespace, which is referentially transparent.  That is to say, all data in the scry namespace can be thought of as something like axiomatic data that everyone agrees on and never changes:  all virtual Nock computations will get the same answers to all Nock 12 opcodes that complete, because everyone agrees on which value is bound to each path in the namespace.
 
@@ -90,7 +91,8 @@ Another way to think of the scry namespace is as comprising an extra implicit ar
 
 Note that there's no requirement that all the scry gates be noun-equivalent (intensionally equal), or even contain the same set of namespace paths and values (extensionally equal). The requirement is that no two scry gates ever return different values for any given scry request path.\footnote{A scry gate that always blocks is trivially legitimate, since it never gives any answers, much less answers that differ from those of another scry gate.}
 
-The Arvo kernel's scry handler gate, as described in the original Moron Lab blog post about Urbit \citep{Yarvin2010}, is a ``static functional namespace'', so even though that gate changes frequently, it maintains the invariant that every scry path's binding to a value is immutable.\footnote{Up to some known flaws that are addressed by UIP-0116: Arvo Ticks \citep{Monk2023, Monk2023a, Wilson2024}.}
+\sloppy
+The Arvo kernel's scry handler gate, as described in the original Moron Lab blog post about Urbit \citep{Yarvin2010}, is a ``static functional namespace''; even though that gate changes frequently, it maintains the invariant that every scry path's binding to a value is immutable.\footnote{Up to some known concerns that are addressed by UIP-0116: Arvo Ticks \citetpr{UIP-0116}.}
 
 As long as a correct Arvo kernel is supplying the scry handler, Mock retains its purely functional nature.  But consider again the case where userspace code runs the same \lstinline[style=inlinecode]{[subject formula]} twice, but with two different scry gates that give different answers to some scry path. From the perspective of a simple Nock interpreter, it's still deterministic:  \lstinline[style=inlinecode]{++mink} is just some Nock function that runs some other computation (Mock) on some inputs.  Because it's just some Nock function, it can't break determinism of the Arvo event; replaying the Arvo event will still yield the same result.  The problem only arises when trying to get clever about how the runtime evaluates Nock, in particular by caching the results of Nock computations.
 
@@ -148,7 +150,8 @@ A corresponding snippet of a Gall agent that scries using \lstinline[style=inlin
   (seer vase a)
 ++  on-poke
   |=  [m=mark v=vase]
-  ^-  (gear (quip card _this))  ::  (seer vase (quip card _this))
+  ^-  (gear (quip card _this))
+  ::  (seer vase (quip card _this))
   :+  %scry  /cx/(now)/foo  |=  foo=vase
   =/  foo-result  !<(@ foo)
   ::  do something with foo-result...
@@ -186,7 +189,7 @@ Here, a \lstinline[style=inlinecode]{++seer} is the type of programs that scry:
 
 The \lstinline[style=inlinecode]{++seer} scry system is intentionally incompatible with the current \dotket~scry system.  We believe that \lstinline[style=inlinecode]{++seer} degrades ergonomics only slightly.  In the initial introduction, we shall provide a wrapper library which accepts an agent written in the \lstinline[style=inlinecode]{++seer} style and produces an agent that scries in the \dotket~style.
 
-The current reference implementation of Seer is available at \citet{Levan2023}.  A more complete example is available at \citet{Levan2023a}.
+The current reference implementation of Seer is available at \citetpr{Levan2023}.  A more complete example is available at \citealt{Levan2023a}.
 
 \subsection{Move-Based Scry Interface}
 
@@ -205,5 +208,6 @@ Gall will also need to run the \lstinline[style=inlinecode]{++on-peek} arm of a 
 
 Because of these concerns with the proposed move-based replacement for \dotket, we will first add it as a new feature alongside \dotket~before committing to removing \dotket.  In this way, if the application patterns end up suffering inordinately, \dotket~may be retained.  That being said, the current primary plan is to deprecate \dotket~once move-based scrying has been verified as providing a sufficiently good application model.  This is a conservative, incremental approach that will not break any existing code and lets us try out the new style in production applications before committing to the removal of Nock 12.
 
+\selectlanguage{USenglish}
 \printbibliography
 \end{document}
