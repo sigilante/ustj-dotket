@@ -4,7 +4,7 @@
 
 \addbibresource{mss.bib}
 
-\newcommand{\authorname}{Ted Blackman~\patp{rovnys-ricfer} \\ Paul Driver~\patp{fodwyt-ragful}}
+\newcommand{\authorname}{Ted Blackman~\patp{rovnys-ricfer} \\ Paul Driver~\patp{fodwyt-ragful} \\ Matthew Levan~\patp{mastyr-bottec}}
 \newcommand{\authorpatp}{}
 \newcommand{\affiliation}{Urbit Foundation}
 
@@ -15,7 +15,7 @@
 \fancyfoot[L]{{\footnotesize
               %% We toggle between these:
               % Manuscript submitted for review.\\
-              {\it Urbit Systems Technical Journal} I:1 (2024):  35–46. \\
+              {\it Urbit Systems Technical Journal} I:1 (2024):  47–58. \\
               ~ \\
               Address author correspondence to \patp{rovnys-ricfer}.
               }}
@@ -45,7 +45,7 @@ The expedient of Nock 12 and the \dotket~rune break the referential transparency
 
 % We will adjust page numbering in final editing.
 \pagenumbering{arabic}
-\setcounter{page}{35}
+\setcounter{page}{47}
 
 \tableofcontents
 
@@ -92,7 +92,7 @@ Another way to think of the scry namespace is as comprising an extra implicit ar
 Note that there's no requirement that all the scry gates be noun-equivalent (intensionally equal), or even contain the same set of namespace paths and values (extensionally equal). The requirement is that no two scry gates ever return different values for any given scry request path.\footnote{A scry gate that always blocks is trivially legitimate, since it never gives any answers, much less answers that differ from those of another scry gate.}
 
 \sloppy
-The Arvo kernel's scry handler gate, as described in the original Moron Lab blog post about Urbit \citep{Yarvin2010}, is a ``static functional namespace''; even though that gate changes frequently, it maintains the invariant that every scry path's binding to a value is immutable.\footnote{Up to some known concerns that are addressed by UIP-0116: Arvo Ticks \citetpr{UIP-0116}.}
+The Arvo kernel's scry handler gate, as described in the original Moron Lab blog post about Urbit \citep{Yarvin2010}, is a ``static functional namespace''; even though that gate changes frequently, it maintains the invariant that every scry path's binding to a value is immutable.\footnote{Up to some known concerns that are addressed by Arvo Ticks \citetpr{UIP-0116}.}
 
 As long as a correct Arvo kernel is supplying the scry handler, Mock retains its purely functional nature.  But consider again the case where userspace code runs the same \lstinline[style=inlinecode]{[subject formula]} twice, but with two different scry gates that give different answers to some scry path. From the perspective of a simple Nock interpreter, it's still deterministic:  \lstinline[style=inlinecode]{++mink} is just some Nock function that runs some other computation (Mock) on some inputs.  Because it's just some Nock function, it can't break determinism of the Arvo event; replaying the Arvo event will still yield the same result.  The problem only arises when trying to get clever about how the runtime evaluates Nock, in particular by caching the results of Nock computations.
 
@@ -189,7 +189,7 @@ Here, a \lstinline[style=inlinecode]{++seer} is the type of programs that scry:
 
 The \lstinline[style=inlinecode]{++seer} scry system is intentionally incompatible with the current \dotket~scry system.  We believe that \lstinline[style=inlinecode]{++seer} degrades ergonomics only slightly.  In the initial introduction, we shall provide a wrapper library which accepts an agent written in the \lstinline[style=inlinecode]{++seer} style and produces an agent that scries in the \dotket~style.
 
-The current reference implementation of Seer is available at \citetpr{Levan2023}.  A more complete example is available at \citealt{Levan2023a}.
+The current reference implementation of Seer is available at \texttt{urbit/urbit} \citetpr{Levan2023}.  A more complete example is available at \citealt{Levan2023a}.
 
 \subsection{Move-Based Scry Interface}
 
@@ -206,7 +206,7 @@ There remain concerns about application development patterns if \dotket~is remov
 
 Gall will also need to run the \lstinline[style=inlinecode]{++on-peek} arm of a Gall agent in the Seer monad, i.e. that arm will return either \lstinline[style=inlinecode]{[%done scry-result]} to indicate it's done or \lstinline[style=inlinecode]{[%scry scry-request-path callback]} to ask Gall to perform a scry request, in which case Gall performs the scry, injects the result into the callback gate, and repeats, until a \lstinline[style=inlinecode]{%done} is returned.  This should not be a direct problem, but betokens complexity creeping into the Gall interface.
 
-Because of these concerns with the proposed move-based replacement for \dotket, we will first add it as a new feature alongside \dotket~before committing to removing \dotket.  In this way, if the application patterns end up suffering inordinately, \dotket~may be retained.  That being said, the current primary plan is to deprecate \dotket~once move-based scrying has been verified as providing a sufficiently good application model.  This is a conservative, incremental approach that will not break any existing code and lets us try out the new style in production applications before committing to the removal of Nock 12.
+Because of these concerns with the proposed move-based replacement for \dotket, we will first add it as a new feature alongside \dotket~before committing to removing \dotket.  In this way, if the application patterns end up suffering inordinately, \dotket~may be retained.  That being said, the current primary plan is to deprecate \dotket~once move-based scrying has been verified as providing a sufficiently good application model.  This is a conservative, incremental approach that will not break any existing code and lets us try out the new style in production applications before committing to the removal of Nock 12.  \tombstone{}
 
 \selectlanguage{USenglish}
 \printbibliography
