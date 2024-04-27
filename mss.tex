@@ -51,7 +51,7 @@ The expedient of Nock 12 and the \dotket~rune break the referential transparency
 
 \section{Introduction}
 
-While Nock formally has twelve opcodes, numbered 0--11, it is convenient to expose in userspace a fake Nock 12 opcode to expose the scry namespace to userspace developers without an asynchronous retrievel step.  This opcode is trivially invoked by using the Hoon \dotket~rune.\footnote{The idea of using a pattern like scrying to introduce a value into a referentially transparent namespace predates Urbit itself; cf. \citet{Yarvin2006}.}  However, Nock 12 breaks the referential transparency of Nock, and this has consequences for the purity of Urbit's functional programming model.
+While Nock formally has twelve opcodes, numbered 0--11, it is convenient to expose in userspace a fake Nock 12 opcode to expose the scry namespace to userspace developers without an asynchronous retrieval step.  This opcode is trivially invoked by using the Hoon \dotket~rune.\footnote{The idea of using a pattern like scrying to introduce a value into a referentially transparent namespace predates Urbit itself; cf. \citet{Yarvin2006}.}  However, Nock 12 breaks the referential transparency of Nock, and this has consequences for the purity of Urbit's functional programming model.
 
 \section{How \dotket~Works}
 
